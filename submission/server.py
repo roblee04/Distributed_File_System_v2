@@ -239,6 +239,7 @@ def route(operation: str, path: str):
     viable_uvms = []
     with node_lock:
         for ip in nodes:
+            # ADD, response = uvm_can_be_routed_to(ip,operation,path) && uvm == node_to_route
             response = uvm_can_be_routed_to(ip,operation,path)
             if response != None and response.status_code == 200:
                 if response.json().get('preferred'):
