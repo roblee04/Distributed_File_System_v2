@@ -1,6 +1,5 @@
-# Final Submission Folder for our COEN 317 Group Project
-
-## Team Members: Jordan Randleman, Rahul Yalavarthi, Robin Lee
+# Distributed_File_System
+Improvements to Distributed file system project for CSEN 180 final project. 
 
 --------------------------------------------------------------------
 ## Demo:
