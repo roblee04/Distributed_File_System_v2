@@ -27,6 +27,8 @@ app = Flask(__name__)
 # How long the router waits for a UVM to activate
 UVM_SPAWN_TIME_BUFFER = 8
 
+# NAIVE, ROUND_ROBIN, CHUNK
+ROUTING_LOGIC = "NAIVE"
 
 ##############################################################################
 # Logging Helper(s)
@@ -238,8 +240,16 @@ def route(operation: str, path: str):
     log('Pinged to route operation <'+operation+'> to path <'+path+'>')
     viable_uvms = []
     with node_lock:
-        for ip in nodes:
-            # ADD, response = uvm_can_be_routed_to(ip,operation,path) && uvm == node_to_route
+        for i in range(len(nodes)):
+            if ROUTING_LOGIC == "NAIVE":
+                ip = nodes[i]
+            elif ROUTING_LOGIC == "ROUND_ROBIN":
+                # ADD Logic
+            elif ROUTING_LOGIC == "CHUNK":
+                # Add logic
+            else:
+                ip = nodes[i]
+            
             response = uvm_can_be_routed_to(ip,operation,path)
             if response != None and response.status_code == 200:
                 if response.json().get('preferred'):
