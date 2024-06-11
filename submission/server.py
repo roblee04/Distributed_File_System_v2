@@ -235,18 +235,26 @@ def allocate_new_uvm(family_id: int, operation: str, path: str):
             ALLOCATED_UVMS[family_id] = 'http://'+new_uip+":5001"
 
 
+RR_COUNTER=0
+RR_COUNTER_LOCK=Lock(COUNTER)
+
 # Determine which UVM can execute <operation> on <path>
 def route(operation: str, path: str):
     log('Pinged to route operation <'+operation+'> to path <'+path+'>')
     viable_uvms = []
+    ip = ""
     with node_lock:
         for i in range(len(nodes)):
             if ROUTING_LOGIC == "NAIVE":
                 ip = nodes[i]
             elif ROUTING_LOGIC == "ROUND_ROBIN":
-                # ADD Logic
+                with RR_COUNTER_LOCK:
+                    current_node_index=(i+RR_COUNTER)% len(nodes)
+                    ip = nodes[current_node_index]
+                    
             elif ROUTING_LOGIC == "CHUNK":
                 # Add logic
+                
             else:
                 ip = nodes[i]
             
@@ -258,6 +266,8 @@ def route(operation: str, path: str):
                 else:
                     viable_uvms.append(ip)
     if len(viable_uvms) > 0:
+        with RR_COUNTER_LOCK:
+            RR_COUNTER += 1
         log('Found a viable UVM to route request to!')
         return 'http://'+viable_uvms[0]+":5001"
     if operation != 'write':
